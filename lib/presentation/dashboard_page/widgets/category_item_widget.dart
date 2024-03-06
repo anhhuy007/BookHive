@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loginform/presentation/dashboard_page/models/category_item_model.dart';
 
 import 'package:flutter/material.dart';
@@ -29,9 +30,8 @@ class CategoryItemWidget extends StatelessWidget {
                 width: 70.adaptSize,
                 padding: EdgeInsets.all(5.h),
                 child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        categoriesItemModelObj.imageURL ??
-                            ImageConstant.imageNotLoaded),
+                    backgroundImage: CachedNetworkImageProvider(
+                      categoriesItemModelObj.imageURL),
                     radius: 30.0,
                     backgroundColor: Colors.transparent)),
             SizedBox(height: 7.v),

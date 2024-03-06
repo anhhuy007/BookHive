@@ -115,10 +115,15 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     this.dashboardRepository,
   ) : super(DashboardState());
 
+  void changeSliderIndex(int index) {
+    state = state.copyWith(sliderIndex: index);
+  }
+
   Future<void> fetchDashboardData() async {
     await Future.wait([
       fetchCategories(),
-      fetchBestSeller()
+      fetchBestSeller(),
+      fetchBanners(),
     ]);
   }
 
@@ -164,7 +169,31 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         dashboardConcreteState: DashboardConcreteState.LOADED,
       );
       Logger.root.activateLogcat();
-      Logger("MyLogger")..info("Book data: ${state.dashboardModelObj.bestSellerItemList.length}");
+      // Logger("MyLogger")..info("Book data: ${state.dashboardModelObj.bestSellerItemList.length}");
+    });
+  }
+  Future<void> fetchBanners() async {
+    // if data is loaded then return
+    if (state.dashboardModelObj.offerbannerItemList.isNotEmpty) return;
+
+    state.dashboardConcreteState = DashboardConcreteState.LOADING;
+    final response = await dashboardRepository.fetchOfferbannerItemlist();
+
+    response.fold((err) {
+      state.dashboardConcreteState = DashboardConcreteState.FAILURE;
+      Logger.root.activateLogcat();
+      final Logger log = Logger("MyLogger");
+      log.info("Error with banner: ", err.message);
+    }, (data) {
+      state = state.copyWith(
+        dashboardModelObj:
+            state.dashboardModelObj.copyWith(
+                offerbannerItemList: data
+            ),
+        dashboardConcreteState: DashboardConcreteState.LOADED,
+      );
+      Logger.root.activateLogcat();
+      // Logger("MyLogger")..info("Banner data: ${state.dashboardModelObj.offerbannerItemList.length}");
     });
   }
 }

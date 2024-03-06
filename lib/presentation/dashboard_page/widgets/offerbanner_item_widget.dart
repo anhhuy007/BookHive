@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+
 import '../models/offerbanner_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:loginform/core/app_export.dart';
@@ -21,16 +23,21 @@ class OfferbannerItemWidget extends StatelessWidget {
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
-          CustomImageView(
-            imagePath: ImageConstant.imgPromotionImage,
+          CachedNetworkImage(
+            imageUrl: offerbannerItemModelObj.imageURL,
             height: 206.v,
             width: 343.h,
-            radius: BorderRadius.circular(
-              5.h,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(5.0)
+              ),
             ),
-            alignment: Alignment.center,
           ),
-          Align(
+          /*Align(
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.only(
@@ -44,7 +51,7 @@ class OfferbannerItemWidget extends StatelessWidget {
                   SizedBox(
                     width: 209.h,
                     child: Text(
-                      "msg_super_flash_sale_50".tr,
+                      "msg_world_book_day".tr,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.headlineSmall!.copyWith(
@@ -134,7 +141,7 @@ class OfferbannerItemWidget extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );

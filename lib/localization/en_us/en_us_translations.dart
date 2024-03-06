@@ -20,6 +20,8 @@ final Map<String, String> enUs = {
   "msg_let_s_get_started": "Let’s Get Started",
 
   // Dashboard Screen
+  "lbl_best_seller": "Best seller",
+  "lbl_new_trending": "New trending",
   "lbl_flash_sale": "Flash Sale",
   "lbl_man_shirt": "Man Shirt",
   "lbl_mega_sale": "Mega Sale",
@@ -31,6 +33,7 @@ final Map<String, String> enUs = {
 
   // Super Flash Sale Screen
   "msg_super_flash_sale": "Super Flash Sale",
+  "msg_world_book_day": "World Book Day",
 
   // Favorite Product Screen
   "msg_favorite_product": "Favorite Product",

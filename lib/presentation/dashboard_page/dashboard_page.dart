@@ -6,7 +6,6 @@ import '../dashboard_page/widgets/megasale_item_widget.dart';
 import '../dashboard_page/widgets/offerbanner_item_widget.dart';
 import '../dashboard_page/widgets/products_item_widget.dart';
 import 'models/book_item_model.dart';
-import 'models/flashsale_item_model.dart';
 import 'models/megasale_item_model.dart';
 import 'models/offerbanner_item_model.dart';
 import 'models/products_item_model.dart';
@@ -14,7 +13,6 @@ import 'notifier/dashboard_notifier.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:loginform/core/app_export.dart';
-import 'package:loginform/widgets/app_bar/appbar_leading_image.dart';
 import 'package:loginform/widgets/app_bar/appbar_subtitle_one.dart';
 import 'package:loginform/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:loginform/widgets/app_bar/custom_app_bar.dart';
@@ -48,15 +46,12 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
                             return SizedBox(
                                 height: 8.v,
                                 child: AnimatedSmoothIndicator(
-                                    activeIndex: ref
-                                        .watch(dashboardNotifierProvider)
-                                        .sliderIndex,
+                                    activeIndex: ref.watch(dashboardNotifierProvider).sliderIndex,
                                     count: ref
                                             .watch(dashboardNotifierProvider)
                                             .dashboardModelObj
                                             .offerbannerItemList
-                                            .length ??
-                                        0,
+                                            .length,
                                     axisDirection: Axis.horizontal,
                                     effect: ScrollingDotsEffect(
                                         spacing: 8,
@@ -72,10 +67,10 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
                           SizedBox(height: 37.v),
                           Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.h),
-                              child: _buildFlashSaleHeader(context,
-                                  flashSaleText: "lbl_flash_sale".tr,
+                              child: _buildBestSellerHeader(context,
+                                  bestSellerText: "lbl_best_seller".tr,
                                   seeMoreText: "lbl_see_more".tr,
-                                  onTapFlashSaleHeader: () {
+                                  onTapBestSellerHeader: () {
                                 onTapFlashSaleHeader(context);
                               })),
                           SizedBox(height: 12.v),
@@ -83,8 +78,8 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
                           SizedBox(height: 23.v),
                           Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.h),
-                              child: _buildFlashSaleHeader(context,
-                                  flashSaleText: "lbl_mega_sale".tr,
+                              child: _buildBestSellerHeader(context,
+                                  bestSellerText: "lbl_mega_sale".tr,
                                   seeMoreText: "lbl_see_more".tr)),
                           SizedBox(height: 10.v),
                           _buildMegaSale(context),
@@ -103,9 +98,16 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
         leadingWidth: 48.h,
-        leading: AppbarLeadingImage(
-            imagePath: ImageConstant.imgRewind,
-            margin: EdgeInsets.only(left: 32.h)),
+        leading: Container(
+          padding: EdgeInsets.only(left: 20.h),
+          child: InkWell(
+            child: Icon(
+              Icons.search,
+              size: 20.adaptSize,
+              color: Colors.grey,
+            )
+          ),
+        ),
         title: AppbarSubtitleOne(
             text: "lbl_search_product".tr,
             margin: EdgeInsets.only(left: 8.h),
@@ -157,20 +159,18 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
                   enableInfiniteScroll: false,
                   scrollDirection: Axis.horizontal,
                   onPageChanged: (index, reason) {
-                    ref.watch(dashboardNotifierProvider).sliderIndex = index;
+                    ref.watch(dashboardNotifierProvider.notifier).changeSliderIndex(index);
                   }),
               itemCount: ref
                       .watch(dashboardNotifierProvider)
                       .dashboardModelObj
                       .offerbannerItemList
-                      .length ??
-                  0,
-              itemBuilder: (context, index, realIndex) {
+                      .length,
+              itemBuilder: (context, index, _) {
                 OfferbannerItemModel model = ref
                         .watch(dashboardNotifierProvider)
                         .dashboardModelObj
-                        .offerbannerItemList[index] ??
-                    OfferbannerItemModel();
+                        .offerbannerItemList[index];
                 return OfferbannerItemWidget(model);
               });
         }));
@@ -178,16 +178,13 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
 
   /// Section Widget
   Widget _buildCategories(BuildContext context) {
-    Logger.root.activateLogcat();
-    final Logger log = Logger("MyLogger");
-
     return Padding(
         padding: EdgeInsets.only(left: 16.h),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(right: 16.h),
-              child: _buildFlashSaleHeader(context,
-                  flashSaleText: "lbl_category".tr,
+              child: _buildBestSellerHeader(context,
+                  bestSellerText: "lbl_category".tr,
                   seeMoreText: "lbl_more_category".tr, onTapSeeMoreText: () {
                 onTapTxtSeeMoreText(context);
               })),
@@ -204,14 +201,12 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
                             .watch(dashboardNotifierProvider)
                             .dashboardModelObj
                             .categoriesItemList
-                            .length ??
-                        0,
+                            .length,
                     itemBuilder: (context, index) {
                       CategoryItem model = ref
                               .watch(dashboardNotifierProvider)
                               .dashboardModelObj
                               .categoriesItemList[index];
-                      log.info("Check: ${model.name}");
                       return CategoryItemWidget(model);
                     });
               }))
@@ -232,9 +227,8 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
               itemCount: ref
                       .watch(dashboardNotifierProvider)
                       .dashboardModelObj
-                      ?.bestSellerItemList
-                      .length ??
-                  0,
+                      .bestSellerItemList
+                      .length,
               itemBuilder: (context, index) {
                 BookItem model = ref
                         .watch(dashboardNotifierProvider)
@@ -261,15 +255,13 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
               itemCount: ref
                       .watch(dashboardNotifierProvider)
                       .dashboardModelObj
-                      ?.megasaleItemList
-                      .length ??
-                  0,
+                      .megasaleItemList
+                      .length,
               itemBuilder: (context, index) {
                 MegasaleItemModel model = ref
                         .watch(dashboardNotifierProvider)
                         .dashboardModelObj
-                        ?.megasaleItemList[index] ??
-                    MegasaleItemModel();
+                        .megasaleItemList[index];
                 return MegasaleItemWidget(model);
               });
         }));
@@ -291,35 +283,33 @@ class DashboardPageState extends ConsumerState<DashboardPage> {
               itemCount: ref
                       .watch(dashboardNotifierProvider)
                       .dashboardModelObj
-                      ?.productsItemList
-                      .length ??
-                  0,
+                      .productsItemList
+                      .length,
               itemBuilder: (context, index) {
                 ProductsItemModel model = ref
                         .watch(dashboardNotifierProvider)
                         .dashboardModelObj
-                        ?.productsItemList[index] ??
-                    ProductsItemModel();
+                        .productsItemList[index];
                 return ProductsItemWidget(model);
               });
         }));
   }
 
   /// Common widget
-  Widget _buildFlashSaleHeader(
+  Widget _buildBestSellerHeader(
     BuildContext context, {
-    required String flashSaleText,
+    required String bestSellerText,
     required String seeMoreText,
-    Function? onTapFlashSaleHeader,
+    Function? onTapBestSellerHeader,
     Function? onTapSeeMoreText,
   }) {
     return GestureDetector(
         onTap: () {
-          onTapFlashSaleHeader!.call();
+          onTapBestSellerHeader!.call();
         },
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(flashSaleText,
+          Text(bestSellerText,
               style: theme.textTheme.titleSmall!
                   .copyWith(color: theme.colorScheme.onPrimary.withOpacity(1))),
           GestureDetector(

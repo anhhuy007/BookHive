@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_network/image_network.dart';
 
 import '../models/book_item_model.dart';
@@ -35,17 +36,24 @@ class BestSellerItemWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
-                child: ImageNetwork(
-                  image: bestSellerModelObj.imageURL,
-                  height: 109.adaptSize,
-                  width: 109.adaptSize,
+              CachedNetworkImage(
+                imageUrl: bestSellerModelObj.imageURL,
+                height: 109.adaptSize,
+                width: 109.adaptSize,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0)
+                  ),
                 ),
               ),
               SizedBox(height: 7.v),
               SizedBox(
                 width: 105.h,
+                height: 35.h,
                 child: Text(
                   bestSellerModelObj.title,
                   maxLines: 2,
@@ -67,6 +75,7 @@ class BestSellerItemWidget extends StatelessWidget {
                   color: Colors.grey
                 ),
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ],
           ),

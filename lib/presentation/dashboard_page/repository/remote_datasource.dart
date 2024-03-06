@@ -7,10 +7,12 @@ import 'package:pocketbase/pocketbase.dart';
 
 import '../../../data/api/endpoint.dart';
 import '../models/book_item_model.dart';
+import '../models/offerbanner_item_model.dart';
 
 abstract class DashBoardDataSource {
   Future<Either<PocketBaseException, List<CategoryItem>>> fetchCategoryItemsList();
   Future<Either<PocketBaseException, List<BookItem>>> fetchBestSellerItemList();
+  Future<Either<PocketBaseException, List<OfferbannerItemModel>>> fetchOfferbannerItemList();
 }
 
 class DashBoardRemoteDataSource extends DashBoardDataSource {
@@ -53,6 +55,27 @@ class DashBoardRemoteDataSource extends DashBoardDataSource {
       }
 
       return Right(bookItemList);
+    }
+    catch(err) {
+      return Left(PocketBaseException(message: err.toString(), code: 400, data: null));
+    }
+  }
+
+  @override
+  Future<Either<PocketBaseException, List<OfferbannerItemModel>>> fetchOfferbannerItemList() async {
+    final pb = PocketBase(baseURL);
+
+    try {
+      final response = await pb.collection("Banners").getList();
+      // suppose the response always returns a list of CategoryItem
+      var bannerItemList = <OfferbannerItemModel>[];
+      for(var i = 0; i < response.totalItems; i++){
+        final item = response.items[i];
+        OfferbannerItemModel bannerItem = OfferbannerItemModel.fromJson(item.data);
+        bannerItemList.add(bannerItem);
+      }
+
+      return Right(bannerItemList);
     }
     catch(err) {
       return Left(PocketBaseException(message: err.toString(), code: 400, data: null));
